@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Provider
 public class ThrowableMapper implements ExceptionMapper<Throwable> {
-	private static final Logger logger = LoggerFactory.getLogger(NotFoundException.class);
+	private static final Logger logger = LoggerFactory.getLogger(ThrowableMapper.class);
 
 	@Override
 	public Response toResponse(Throwable e) {
