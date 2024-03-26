@@ -38,7 +38,6 @@ public class TransactionManagementImpl implements ITransactionManagement {
 
 	@Override
 	public Uni<Transaction> retrieveTransaction(String transactionId) {
-		System.out.println(transactionId);
 		return transactionRepository.findByTransactionId(transactionId)
 		                            .onItem()
 		                            .ifNull()
@@ -62,8 +61,30 @@ public class TransactionManagementImpl implements ITransactionManagement {
 	}
 
 	@Override
-	public Uni<Transaction> updateTransaction(Transaction transaction) {
-		return null;
+	@Transactional
+	public Uni<Transaction> updateTransaction(TransactionRequest transaction) {
+		Uni<Transaction> transactionUni = transactionRepository.findByTransactionId(transaction.getTransactionId());
+		return transactionUni
+				.onItem()
+				.ifNull()
+				.failWith(() -> new RuntimeException("No transaction found with id : " + transaction.getTransactionId()))
+				.onFailure()
+				.recoverWithUni(error -> Uni
+						.createFrom()
+						.failure(new RuntimeException("Error updating transaction")))
+				.onItem()
+				.transform(entity -> {
+					entity.setTransactionId(transaction.getTransactionId());
+					entity.setDescription(transaction.getDescription());
+					entity.setAmount(transaction.getAmount());
+					entity.setDate(transaction.getDate());
+					entity.setCategory(transaction.getCategory());
+					entity.setType(transaction.getType());
+					entity.setSource(transaction.getSource());
+					entity.setDestination(transaction.getDestination());
+					return entity;
+				});
+
 	}
 
 	@Override

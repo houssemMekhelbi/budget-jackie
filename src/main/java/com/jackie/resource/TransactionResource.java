@@ -6,10 +6,7 @@ import com.jackie.service.ITransactionManagement;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -70,6 +67,19 @@ public class TransactionResource {
 	public Uni<Transaction> saveTransaction(TransactionRequest transactionRequest){
         return transactionManagement.saveTransaction(transactionRequest);
     }
+	@PUT
+	@Operation(summary = "Update a transaction")
+	@APIResponse(
+			responseCode = "200",
+			description = "Update a transaction, or error if none",
+			content = @Content(
+					mediaType = APPLICATION_JSON,
+					schema = @Schema(implementation = Transaction.class)
+			)
+	)
+	public Uni<Transaction> updateTransaction(TransactionRequest transactionRequest){
+		return transactionManagement.updateTransaction(transactionRequest);
+	}
 //		return transactionManagement
 //				.retrieveAllTransactions();
 }

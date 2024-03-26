@@ -14,7 +14,5 @@ import org.mapstruct.Mapping;
 public interface TransactionMapper {
     @Mapping(target = "id", ignore = true)
     Transaction transactionRequestToTransaction(TransactionRequest transactionRequest);
-
-    TransactionRequest transactionToTransactionRequest(Transaction transaction);
-
+    Transaction oldTransactionToNewTransaction(Transaction oldTransaction);
 }

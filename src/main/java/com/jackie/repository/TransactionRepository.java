@@ -8,6 +8,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class TransactionRepository implements PanacheRepository<Transaction> {
 	public Uni<Transaction> findByTransactionId(String id) {
-		return find("transaction_id",id).firstResult();
+		return find("transactionId",id).firstResult();
 	}
 }

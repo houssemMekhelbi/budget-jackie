@@ -13,7 +13,7 @@ public interface ITransactionManagement {
 
 	Uni<Transaction> saveTransaction(TransactionRequest transactionRequest);
 
-	Uni<Transaction> updateTransaction(Transaction transaction);
+	Uni<Transaction> updateTransaction(TransactionRequest transaction);
 
 	Uni<Void> deleteTransaction(String transactionId);
 }
