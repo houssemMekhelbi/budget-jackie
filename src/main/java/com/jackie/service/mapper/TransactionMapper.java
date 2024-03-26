@@ -1,8 +1,7 @@
 package com.jackie.service.mapper;
 
 import com.jackie.model.Transaction;
-import com.jackie.model.payload.TransactionRequest;
-import jakarta.enterprise.context.ApplicationScoped;
+import com.jackie.model.TransactionDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -13,6 +12,5 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "jakarta")
 public interface TransactionMapper {
     @Mapping(target = "id", ignore = true)
-    Transaction transactionRequestToTransaction(TransactionRequest transactionRequest);
-    Transaction oldTransactionToNewTransaction(Transaction oldTransaction);
+    Transaction transactionRequestToTransaction(TransactionDto transactionRequest);
 }

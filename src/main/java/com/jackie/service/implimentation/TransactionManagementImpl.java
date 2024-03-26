@@ -1,7 +1,7 @@
 package com.jackie.service.implimentation;
 
 import com.jackie.model.Transaction;
-import com.jackie.model.payload.TransactionRequest;
+import com.jackie.model.TransactionDto;
 import com.jackie.repository.TransactionRepository;
 import com.jackie.service.ITransactionManagement;
 import com.jackie.service.mapper.TransactionMapper;
@@ -50,7 +50,7 @@ public class TransactionManagementImpl implements ITransactionManagement {
 
 	@Override
 	@Transactional
-	public Uni<Transaction> saveTransaction(TransactionRequest transactionRequest) {
+	public Uni<Transaction> saveTransaction(TransactionDto transactionRequest) {
 		Transaction transaction = transactionMapper.transactionRequestToTransaction(transactionRequest);
 		return transactionRepository
 				.persist(transaction)
@@ -62,7 +62,7 @@ public class TransactionManagementImpl implements ITransactionManagement {
 
 	@Override
 	@Transactional
-	public Uni<Transaction> updateTransaction(TransactionRequest transaction) {
+	public Uni<Transaction> updateTransaction(TransactionDto transaction) {
 		Uni<Transaction> transactionUni = transactionRepository.findByTransactionId(transaction.getTransactionId());
 		return transactionUni
 				.onItem()
