@@ -1,0 +1,21 @@
+quarkus:
+  # Properties that configure the Swagger documentation and Swagger UI
+  smallrye-openapi:
+    path: /api-docs
+    info-version: 1.0
+    info-description: Budget Management - Jackie API - REST API Documentation
+    info-contact-email: contact@houssemmekhelbi.com
+    info-contact-name: Houssem Mekhelbi
+    info-contact-url: https://www.houssemmekhelbi.com#contact
+  swagger-ui:
+    path: /api-docs-ui
+  # Properties that configure the JDBC data source driver of PostgreSQL data source
+  datasource:
+    reactive:
+      url: vertx-reactive:postgresql://localhost/budget_management
+    db-kind: postgresql
+    username: jackie
+    password: jackie
+  hibernate-orm:
+    database:
+      generation: drop-and-create
