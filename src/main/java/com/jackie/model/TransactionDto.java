@@ -1,32 +1,35 @@
 package com.jackie.model;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 /**
  * DTO for {@link Transaction}
  */
-public class TransactionDto implements Serializable {
+public class TransactionDto {
 	private final Long id;
 	private final String transactionId;
 	private final String description;
 	private final double amount;
-	private final String date;
+	private final ZonedDateTime date;
+	private final TypeTransaction type;
+
 	private final String category;
-	private final String type;
+
 	private final String source;
 	private final String destination;
 
-	public TransactionDto(Long id, String transactionId, String description, double amount, String date,
-	                      String category,
-	                      String type, String source, String destination) {
+
+	public TransactionDto(Long id, String transactionId, String description, double amount, ZonedDateTime date,
+	                      TypeTransaction type, String category, String source, String destination) {
 		this.id = id;
 		this.transactionId = transactionId;
 		this.description = description;
 		this.amount = amount;
 		this.date = date;
-		this.category = category;
 		this.type = type;
+		this.category = category;
 		this.source = source;
 		this.destination = destination;
 	}
@@ -47,16 +50,16 @@ public class TransactionDto implements Serializable {
 		return amount;
 	}
 
-	public String getDate() {
+	public ZonedDateTime getDate() {
 		return date;
+	}
+
+	public TypeTransaction getType() {
+		return type;
 	}
 
 	public String getCategory() {
 		return category;
-	}
-
-	public String getType() {
-		return type;
 	}
 
 	public String getSource() {
@@ -77,15 +80,15 @@ public class TransactionDto implements Serializable {
 				Objects.equals(this.description, entity.description) &&
 				Objects.equals(this.amount, entity.amount) &&
 				Objects.equals(this.date, entity.date) &&
-				Objects.equals(this.category, entity.category) &&
 				Objects.equals(this.type, entity.type) &&
+				Objects.equals(this.category, entity.category) &&
 				Objects.equals(this.source, entity.source) &&
 				Objects.equals(this.destination, entity.destination);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, transactionId, description, amount, date, category, type, source, destination);
+		return Objects.hash(id, transactionId, description, amount, date, type, category, source, destination);
 	}
 
 	@Override
@@ -96,9 +99,10 @@ public class TransactionDto implements Serializable {
 				"description = " + description + ", " +
 				"amount = " + amount + ", " +
 				"date = " + date + ", " +
-				"category = " + category + ", " +
 				"type = " + type + ", " +
+				"category = " + category + ", " +
 				"source = " + source + ", " +
-				"destination = " + destination + ")";
+				"destination = " + destination +
+				")";
 	}
 }

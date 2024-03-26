@@ -1,12 +1,17 @@
 package com.jackie.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
+import java.time.ZonedDateTime;
 import java.util.Objects;
 @Entity
 @Table(name = "b_transactions")
@@ -18,22 +23,21 @@ public class Transaction {
 	private String transactionId;
 	private String description;
 	private double amount;
-	private String date;
-	private String category;
-	private String type;
-	private String source;
-	private String destination;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+	private ZonedDateTime date;
+	@OneToOne
+	private TransactionCategory category;
+	private TypeTransaction type;
+	@ManyToOne
+	@JoinColumn(name = "source_id")
+	private Account source;
+	@ManyToOne
+	@JoinColumn(name = "destination_id")
+	private Account destination;
 	public Transaction() {}
 
-	public Transaction(Long id,
-	                   String transactionId,
-	                   String description,
-	                   double amount,
-	                   String date,
-	                   String category,
-	                   String type,
-	                   String source,
-	                   String destination) {
+	public Transaction(Long id, String transactionId, String description, double amount, ZonedDateTime date,
+	                   TransactionCategory category, TypeTransaction type, Account source, Account destination) {
 		this.id = id;
 		this.transactionId = transactionId;
 		this.description = description;
@@ -44,58 +48,76 @@ public class Transaction {
 		this.source = source;
 		this.destination = destination;
 	}
+
 	public Long getId() {
 		return id;
 	}
+
 	public void setId(Long id) {
 		this.id = id;
 	}
+
 	public String getTransactionId() {
 		return transactionId;
 	}
+
 	public void setTransactionId(String transactionId) {
 		this.transactionId = transactionId;
 	}
+
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
 	public double getAmount() {
 		return amount;
 	}
+
 	public void setAmount(double amount) {
 		this.amount = amount;
 	}
-	public String getDate() {
+
+	public ZonedDateTime getDate() {
 		return date;
 	}
-	public void setDate(String date) {
+
+	public void setDate(ZonedDateTime date) {
 		this.date = date;
 	}
-	public String getCategory() {
+
+	public TransactionCategory getCategory() {
 		return category;
 	}
-	public void setCategory(String category) {
+
+	public void setCategory(TransactionCategory category) {
 		this.category = category;
 	}
-	public String getType() {
+
+	public TypeTransaction getType() {
 		return type;
 	}
-	public void setType(String type) {
+
+	public void setType(TypeTransaction type) {
 		this.type = type;
 	}
-	public String getSource() {
+
+	public Account getSource() {
 		return source;
 	}
-	public void setSource(String source) {
+
+	public void setSource(Account source) {
 		this.source = source;
 	}
-	public String getDestination() {
+
+	public Account getDestination() {
 		return destination;
 	}
-	public void setDestination(String destination) {
+
+	public void setDestination(Account destination) {
 		this.destination = destination;
 	}
 
@@ -104,12 +126,12 @@ public class Transaction {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Transaction that = (Transaction) o;
-		return Objects.equals(id, that.id) && Objects.equals(transactionId, that.transactionId);
+		return Objects.equals(id, that.id);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, transactionId);
+		return Objects.hash(id);
 	}
 
 	@Override
@@ -119,11 +141,11 @@ public class Transaction {
 				", transactionId='" + transactionId + '\'' +
 				", description='" + description + '\'' +
 				", amount=" + amount +
-				", date='" + date + '\'' +
-				", category='" + category + '\'' +
-				", type='" + type + '\'' +
-				", source='" + source + '\'' +
-				", destination='" + destination + '\'' +
+				", date=" + date +
+				", category=" + category +
+				", type=" + type +
+				", source=" + source +
+				", destination=" + destination +
 				'}';
 	}
 }

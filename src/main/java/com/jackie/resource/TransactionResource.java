@@ -1,7 +1,6 @@
 package com.jackie.resource;
 
 import com.jackie.model.Transaction;
-import com.jackie.model.TransactionDto;
 import com.jackie.service.ITransactionManagement;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
