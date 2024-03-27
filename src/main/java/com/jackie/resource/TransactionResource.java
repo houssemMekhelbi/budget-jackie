@@ -1,6 +1,7 @@
 package com.jackie.resource;
 
 import com.jackie.model.Transaction;
+import com.jackie.model.TransactionDto;
 import com.jackie.service.ITransactionManagement;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
@@ -60,7 +61,7 @@ public class TransactionResource {
             description = "Saves a transaction, or error if none",
             content = @Content(
 					mediaType = APPLICATION_JSON,
-                    schema = @Schema(implementation = TransactionDto.class)
+                    schema = @Schema(implementation =  TransactionDto.class)
 			)
 	)
 	public Uni<Transaction> saveTransaction(TransactionDto transactionRequest){

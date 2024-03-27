@@ -12,5 +12,13 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "jakarta")
 public interface TransactionMapper {
     @Mapping(target = "id", ignore = true)
-    Transaction transactionRequestToTransaction(TransactionDto transactionRequest);
+    @Mapping(target = "category",  ignore = true)
+    @Mapping(target = "debtor",  ignore = true)
+    @Mapping(target = "creditor",  ignore = true)
+    Transaction toEntity(TransactionDto transactionRequest);
+    @Mapping(target = "category",  ignore = true)
+    @Mapping(target = "debtor",  ignore = true)
+    @Mapping(target = "creditor",  ignore = true)
+    TransactionDto toDto(Transaction transaction);
+
 }

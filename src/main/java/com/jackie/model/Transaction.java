@@ -8,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 import java.time.ZonedDateTime;
@@ -25,19 +24,19 @@ public class Transaction {
 	private double amount;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
 	private ZonedDateTime date;
-	@OneToOne
+	@ManyToOne
 	private TransactionCategory category;
 	private TypeTransaction type;
 	@ManyToOne
-	@JoinColumn(name = "source_id")
-	private Account source;
+	@JoinColumn(name = "debtor_id")
+	private Account debtor;
 	@ManyToOne
-	@JoinColumn(name = "destination_id")
-	private Account destination;
+	@JoinColumn(name = "creditor_id")
+	private Account creditor;
 	public Transaction() {}
 
 	public Transaction(Long id, String transactionId, String description, double amount, ZonedDateTime date,
-	                   TransactionCategory category, TypeTransaction type, Account source, Account destination) {
+	                   TransactionCategory category, TypeTransaction type, Account debtor, Account creditor) {
 		this.id = id;
 		this.transactionId = transactionId;
 		this.description = description;
@@ -45,8 +44,8 @@ public class Transaction {
 		this.date = date;
 		this.category = category;
 		this.type = type;
-		this.source = source;
-		this.destination = destination;
+		this.debtor = debtor;
+		this.creditor = creditor;
 	}
 
 	public Long getId() {
@@ -105,20 +104,20 @@ public class Transaction {
 		this.type = type;
 	}
 
-	public Account getSource() {
-		return source;
+	public Account getDebtor() {
+		return debtor;
 	}
 
-	public void setSource(Account source) {
-		this.source = source;
+	public void setDebtor(Account debtor) {
+		this.debtor = debtor;
 	}
 
-	public Account getDestination() {
-		return destination;
+	public Account getCreditor() {
+		return creditor;
 	}
 
-	public void setDestination(Account destination) {
-		this.destination = destination;
+	public void setCreditor(Account creditor) {
+		this.creditor = creditor;
 	}
 
 	@Override
@@ -144,8 +143,8 @@ public class Transaction {
 				", date=" + date +
 				", category=" + category +
 				", type=" + type +
-				", source=" + source +
-				", destination=" + destination +
+				", source=" + debtor +
+				", destination=" + creditor +
 				'}';
 	}
 }

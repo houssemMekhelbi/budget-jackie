@@ -1,7 +1,11 @@
 package com.jackie.service.implimentation;
 
+import com.jackie.model.Account;
 import com.jackie.model.Transaction;
+import com.jackie.model.TransactionCategory;
 import com.jackie.model.TransactionDto;
+import com.jackie.repository.AccountRepository;
+import com.jackie.repository.CategoryRepository;
 import com.jackie.repository.TransactionRepository;
 import com.jackie.service.ITransactionManagement;
 import com.jackie.service.mapper.TransactionMapper;
@@ -17,7 +21,12 @@ public class TransactionManagementImpl implements ITransactionManagement {
 	@Inject
 	TransactionRepository transactionRepository;
 	@Inject
+	AccountRepository accountRepository;
+	@Inject
+	CategoryRepository categoryRepository;
+	@Inject
 	TransactionMapper transactionMapper;
+
 	@Override
 	public Uni<List<Transaction>> retrieveAllTransactions() {
 		return transactionRepository
@@ -32,7 +41,8 @@ public class TransactionManagementImpl implements ITransactionManagement {
 						list ->
 								list.isEmpty() ? Uni
 										.createFrom()
-										.failure(new RuntimeException("No transactions found")) : Uni.createFrom().item(list));
+										.failure(new RuntimeException("No transactions found")) : Uni.createFrom().item(
+										list));
 
 	}
 
@@ -45,20 +55,56 @@ public class TransactionManagementImpl implements ITransactionManagement {
 				                                                                 + transactionId))
 		                            .onFailure()
 		                            .recoverWithUni(error -> Uni.createFrom()
-		                                                        .failure(new RuntimeException("Error retrieving transaction")));
+		                                                        .failure(new RuntimeException(
+				                                                        "Error retrieving transaction")));
 	}
 
 	@Override
 	@Transactional
 	public Uni<Transaction> saveTransaction(TransactionDto transactionRequest) {
-		Transaction transaction = transactionMapper.transactionRequestToTransaction(transactionRequest);
-		return transactionRepository
-				.persist(transaction)
-				.onFailure()
-				.recoverWithUni(error -> Uni
-						.createFrom()
-						.failure(new RuntimeException("Error saving transaction")));
+		// Save transaction
+		Transaction transaction = transactionMapper.toEntity(transactionRequest);
+
+		// Retrieve debit account from the database
+		Uni<Account> debitAccountUni = accountRepository.findByAccountId(transactionRequest.getDebtor())
+		                                                .onFailure().recoverWithItem(error -> {
+					//log.error("Error retrieving debit account with ID {}", transactionRequest.getDebtor(), error);
+					throw new RuntimeException("Error retrieving debit account");
+				});
+
+		// Retrieve credit account from the database
+		Uni<Account> creditAccountUni = accountRepository.findByAccountId(transactionRequest.getCreditor())
+		                                                 .onFailure().recoverWithItem(error -> {
+					//log.error("Error retrieving credit account with ID {}", transactionRequest.getCreditor(), error);
+					throw new RuntimeException("Error retrieving credit account");
+				});
+
+		// Retrieve category from the database
+		return Uni.combine().all().unis(debitAccountUni, creditAccountUni,
+		                                categoryRepository.findByCategoryId(transactionRequest.getCategory()))
+		          .asTuple()
+		          .onItem().ifNotNull().transformToUni(tuple -> {
+					Account debtor = tuple.getItem1();
+					Account creditor = tuple.getItem2();
+					TransactionCategory category = tuple.getItem3();
+
+					if (debtor == null || creditor == null) {
+						throw new RuntimeException("Debit or credit account not found");
+					}
+
+					transaction.setDebtor(debtor);
+					transaction.setCreditor(creditor);
+					transaction.setCategory(category);
+
+					return transactionRepository.persist(transaction)
+					                            .onFailure().recoverWithUni(error ->
+							                                                        Uni.createFrom().failure(
+									                                                        new RuntimeException("Error saving transaction")));
+				})
+		          .onItem().ifNull().failWith(new RuntimeException("Category not found"));
 	}
+
+
 
 	@Override
 	@Transactional
@@ -67,7 +113,8 @@ public class TransactionManagementImpl implements ITransactionManagement {
 		return transactionUni
 				.onItem()
 				.ifNull()
-				.failWith(() -> new RuntimeException("No transaction found with id : " + transaction.getTransactionId()))
+				.failWith(
+						() -> new RuntimeException("No transaction found with id : " + transaction.getTransactionId()))
 				.onFailure()
 				.recoverWithUni(error -> Uni
 						.createFrom()
@@ -75,17 +122,12 @@ public class TransactionManagementImpl implements ITransactionManagement {
 				.onItem()
 				.transform(entity -> {
 					entity.setTransactionId(transaction.getTransactionId());
-					entity.setDescription(transaction.getDescription());
-					entity.setAmount(transaction.getAmount());
-					entity.setDate(transaction.getDate());
-					entity.setCategory(transaction.getCategory());
-					entity.setType(transaction.getType());
-					entity.setSource(transaction.getSource());
-					entity.setDestination(transaction.getDestination());
+					entity = transactionMapper.toEntity(transaction);
 					return entity;
 				});
 
 	}
+
 
 	@Override
 	public Uni<Void> deleteTransaction(String transactionId) {

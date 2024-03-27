@@ -1,6 +1,5 @@
 package com.jackie.model;
 
-import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
@@ -17,12 +16,12 @@ public class TransactionDto {
 
 	private final String category;
 
-	private final String source;
-	private final String destination;
+	private final String debtor;
+	private final String creditor;
 
 
 	public TransactionDto(Long id, String transactionId, String description, double amount, ZonedDateTime date,
-	                      TypeTransaction type, String category, String source, String destination) {
+	                      TypeTransaction type, String category, String debtor, String creditor) {
 		this.id = id;
 		this.transactionId = transactionId;
 		this.description = description;
@@ -30,8 +29,8 @@ public class TransactionDto {
 		this.date = date;
 		this.type = type;
 		this.category = category;
-		this.source = source;
-		this.destination = destination;
+		this.debtor = debtor;
+		this.creditor = creditor;
 	}
 
 	public Long getId() {
@@ -62,12 +61,12 @@ public class TransactionDto {
 		return category;
 	}
 
-	public String getSource() {
-		return source;
+	public String getDebtor() {
+		return debtor;
 	}
 
-	public String getDestination() {
-		return destination;
+	public String getCreditor() {
+		return creditor;
 	}
 
 	@Override
@@ -82,13 +81,13 @@ public class TransactionDto {
 				Objects.equals(this.date, entity.date) &&
 				Objects.equals(this.type, entity.type) &&
 				Objects.equals(this.category, entity.category) &&
-				Objects.equals(this.source, entity.source) &&
-				Objects.equals(this.destination, entity.destination);
+				Objects.equals(this.debtor, entity.debtor) &&
+				Objects.equals(this.creditor, entity.creditor);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, transactionId, description, amount, date, type, category, source, destination);
+		return Objects.hash(id, transactionId, description, amount, date, type, category, debtor, creditor);
 	}
 
 	@Override
@@ -101,8 +100,8 @@ public class TransactionDto {
 				"date = " + date + ", " +
 				"type = " + type + ", " +
 				"category = " + category + ", " +
-				"source = " + source + ", " +
-				"destination = " + destination +
+				"source = " + debtor + ", " +
+				"destination = " + creditor +
 				")";
 	}
 }
